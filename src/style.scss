@@ -1,0 +1,58 @@
+@import "config";
+
+@mixin flexCenter($direction) {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: $direction;
+}
+
+@mixin flexTask {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+body {
+	background-color: $primary-color;
+	@include flexCenter(row);
+	min-height: 100vh;
+	font-family: sans-serif;
+}
+
+.container {
+	background-color: lightblue;
+	width: 250px;
+	border: 3px solid black;
+	border-radius: 6px;
+	padding: 1rem;
+	font-size: 1.5rem;
+	button {
+		background-color: rgba(255, 255, 255, 0);
+		border: 0;
+	}
+	box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+}
+
+.task {
+	@include flexTask;
+	.checkbox {
+	}
+	span {
+		width: 80%;
+	}
+}
+
+.new {
+	@include flexTask;
+	.text {
+		background-color: rgba(255, 255, 255, 0);
+		border: 0;
+		border-bottom: 1px solid black;
+		width: 100%;
+		&:focus {
+			outline: none;
+		}
+	}
+}
