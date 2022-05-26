@@ -1,6 +1,8 @@
 enum icons {
 	edit = "<i class='fa-solid fa-pen'></i>",
 	delete = "<i class='fa-solid fa-trash'></i>",
+	up = "<i class='fa-solid fa-angle-up'>",
+	down = "<i class='fa-solid fa-angle-down'>",
 }
 
 const newTaskContent = document.getElementById("new-content") as HTMLInputElement;
@@ -8,9 +10,9 @@ const newTaskButton = document.getElementById("new-button");
 
 newTaskButton.addEventListener("click", () => {
 	if (newTaskContent.value.length > 0) {
-		const tasks = document.getElementsByClassName("task");
-		const lastTask = [...tasks].pop();
-		lastTask.insertAdjacentElement("afterend", createTask(newTaskContent.value));
+		const tasks = document.getElementById("container").children;
+		const lastTask = [...tasks].slice(0, -1).pop();
+		lastTask.after(createTask(newTaskContent.value));
 		newTaskContent.value = "";
 	}
 });
@@ -23,6 +25,7 @@ function createTask(text: string): HTMLElement {
 	const checkbox = document.createElement("input");
 	checkbox.type = "radio";
 	checkbox.classList.add("checkbox");
+	checkbox.addEventListener("click", () => toggleCheckbox(checkbox));
 	newTask.appendChild(checkbox);
 	// Create text
 	const taskContent = document.createElement("span");
@@ -41,11 +44,46 @@ function createTask(text: string): HTMLElement {
 	trash.innerHTML = icons.delete;
 	trash.addEventListener("click", () => deleteTask(newTask));
 	newTask.appendChild(trash);
+	// Create Arrow buttons
+	const arrowsCotainer = document.createElement("div");
+	arrowsCotainer.classList.add("move");
+	const up = document.createElement("button");
+	const down = document.createElement("button");
+	arrowsCotainer.appendChild(up);
+	arrowsCotainer.appendChild(down);
+	// up.classList.add("");
+	// down.classList.add("");
+	up.innerHTML = icons.up;
+	down.innerHTML = icons.down;
+	up.addEventListener("click", () => moveUp(newTask));
+	down.addEventListener("click", () => moveDown(newTask));
+	newTask.appendChild(arrowsCotainer);
 	return newTask;
+}
+
+function toggleCheckbox(checkbox: HTMLInputElement): void {
+	if (!checkbox.parentElement.classList.toggle("completed")) checkbox.checked = false;
 }
 
 function deleteTask(task: HTMLElement) {
 	task.remove();
+}
+
+function moveUp(task: HTMLElement): void {
+	const allTasks = [...document.querySelectorAll(".task")];
+	const indexOfTask = allTasks.indexOf(task);
+	if (indexOfTask > 0) {
+		task.parentElement.insertBefore(task, allTasks[indexOfTask - 1]);
+	}
+}
+
+function moveDown(task: HTMLElement): void {
+	const allTasks = [...document.querySelectorAll(".task")];
+	allTasks.push(document.getElementsByClassName("new")[0]);
+	const indexOfTask = allTasks.indexOf(task);
+	if (indexOfTask < allTasks.length - 2) {
+		task.parentElement.insertBefore(task, allTasks[indexOfTask + 2]);
+	}
 }
 
 function formatText(text: string): string {
