@@ -9,7 +9,7 @@
 
 @mixin flexTask {
 	display: flex;
-	justify-content: space-between;
+	// justify-content: space-between;
 	align-items: center;
 	width: 100%;
 }
@@ -18,41 +18,85 @@ body {
 	background-color: $primary-color;
 	@include flexCenter(row);
 	min-height: 100vh;
-	font-family: sans-serif;
+	font-family: corbel;
 }
 
 .container {
-	background-color: lightblue;
-	width: 250px;
+	background-color: white;
+	width: 350px;
 	border: 3px solid black;
 	border-radius: 6px;
-	padding: 1rem;
-	font-size: 1.5rem;
-	button {
-		background-color: rgba(255, 255, 255, 0);
-		border: 0;
-	}
+	padding: 10px;
+	font-size: 1.6rem;
 	box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+	@include flexCenter(column);
+	h1 {
+		font-size: 3rem;
+	}
 }
 
 .task {
 	@include flexTask;
+	background-color: rgb(221, 221, 221);
+	border: 1px solid black;
+	border-radius: 2px;
+	margin: 5px 0;
+	padding: 0 8px;
+	height: 55px;
 	.checkbox {
+		transform: scale(1.3);
+		border-radius: 100%;
 	}
 	span {
 		width: 80%;
+		margin-left: 7px;
+	}
+	.edit {
+		color: rgb(0, 110, 255);
+		font-size: 1.2rem;
+	}
+	.delete {
+		font-size: 1.2rem;
+		margin: 0 7px;
+		color: red;
+	}
+	.move {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 85%;
+		button {
+			transition: color 0.3s;
+			font-size: 1.1rem;
+			&:hover {
+				color: blue;
+			}
+		}
 	}
 }
 
 .new {
 	@include flexTask;
+	height: 40px;
 	.text {
 		background-color: rgba(255, 255, 255, 0);
 		border: 0;
-		border-bottom: 1px solid black;
+		border-bottom: 1px solid darkgray;
 		width: 100%;
+		height: 100%;
 		&:focus {
 			outline: none;
+		}
+	}
+	#new-button {
+		background-color: lightgreen;
+		border-radius: 2px;
+		height: 70%;
+		aspect-ratio: 1;
+		font-size: 1rem;
+		transition: font-size 0.1s;
+		&:hover {
+			font-size: 1.2rem;
 		}
 	}
 }
