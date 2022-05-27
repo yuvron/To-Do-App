@@ -8,13 +8,22 @@ var icons;
 const newTaskContent = document.getElementById("new-content");
 const newTaskButton = document.getElementById("new-button");
 newTaskButton.addEventListener("click", () => {
+    addTask();
+});
+document.addEventListener("keydown", (event) => {
+    if (document.activeElement === newTaskContent && event.code === "Enter")
+        addTask();
+});
+// Add a new task to the list of tasks
+function addTask() {
     if (newTaskContent.value.length > 0) {
         const tasks = document.getElementById("container").children;
         const lastTask = [...tasks].slice(0, -1).pop();
         lastTask.after(createTask(newTaskContent.value));
         newTaskContent.value = "";
+        updateTasksCounter();
     }
-});
+}
 // Create new Task
 function createTask(text) {
     const newTask = document.createElement("div");
@@ -34,7 +43,7 @@ function createTask(text) {
     const edit = document.createElement("button");
     edit.classList.add("edit");
     edit.innerHTML = icons.edit;
-    edit.addEventListener("click", () => deleteTask(newTask));
+    edit.addEventListener("click", () => editTask(newTask));
     newTask.appendChild(edit);
     // Create trash button
     const trash = document.createElement("button");
@@ -58,12 +67,17 @@ function createTask(text) {
     newTask.appendChild(arrowsCotainer);
     return newTask;
 }
+function updateTasksCounter() {
+    const counter = document.getElementById("counter");
+}
 function toggleCheckbox(checkbox) {
     if (!checkbox.parentElement.classList.toggle("completed"))
         checkbox.checked = false;
 }
+function editTask(task) { }
 function deleteTask(task) {
     task.remove();
+    updateTasksCounter();
 }
 function moveUp(task) {
     const allTasks = [...document.querySelectorAll(".task")];

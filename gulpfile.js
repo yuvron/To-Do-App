@@ -16,13 +16,13 @@ gulp.task("ts", () => {
 
 // Sass task
 gulp.task("sass", () => {
-	return gulp.src("src/style.scss").pipe(sass()).pipe(gulp.dest("dist"));
+	return gulp.src("src/style.scss").pipe(sass()).pipe(gulp.dest("dist")).pipe(browsersync.stream());
 });
 
 // Watch task
 gulp.task("watch", () => {
 	gulp.watch(["src/*.html", "src/*.ts"], gulp.series("html", "ts", "browsersyncReload"));
-	gulp.watch("src/style.scss", gulp.series("sass", "browsersyncReload"));
+	gulp.watch("src/style.scss", gulp.series("sass"));
 });
 
 // Browser sync tasks
@@ -40,4 +40,4 @@ gulp.task("browsersyncReload", (cb) => {
 });
 
 // Default task
-gulp.task("default", gulp.series("html", "ts", "sass", "browsersyncServe", "watch"));
+gulp.task("default", gulp.series("browsersyncServe", "html", "ts", "sass", "watch"));

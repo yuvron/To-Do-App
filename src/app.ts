@@ -9,13 +9,23 @@ const newTaskContent = document.getElementById("new-content") as HTMLInputElemen
 const newTaskButton = document.getElementById("new-button");
 
 newTaskButton.addEventListener("click", () => {
+	addTask();
+});
+
+document.addEventListener("keydown", (event: KeyboardEvent) => {
+	if (document.activeElement === newTaskContent && event.code === "Enter") addTask();
+});
+
+// Add a new task to the list of tasks
+function addTask(): void {
 	if (newTaskContent.value.length > 0) {
 		const tasks = document.getElementById("container").children;
 		const lastTask = [...tasks].slice(0, -1).pop();
 		lastTask.after(createTask(newTaskContent.value));
 		newTaskContent.value = "";
+		updateTasksCounter();
 	}
-});
+}
 
 // Create new Task
 function createTask(text: string): HTMLElement {
@@ -36,7 +46,7 @@ function createTask(text: string): HTMLElement {
 	const edit = document.createElement("button");
 	edit.classList.add("edit");
 	edit.innerHTML = icons.edit;
-	edit.addEventListener("click", () => deleteTask(newTask));
+	edit.addEventListener("click", () => editTask(newTask));
 	newTask.appendChild(edit);
 	// Create trash button
 	const trash = document.createElement("button");
@@ -61,12 +71,19 @@ function createTask(text: string): HTMLElement {
 	return newTask;
 }
 
+function updateTasksCounter(): void {
+	const counter = document.getElementById("counter");
+}
+
 function toggleCheckbox(checkbox: HTMLInputElement): void {
 	if (!checkbox.parentElement.classList.toggle("completed")) checkbox.checked = false;
 }
 
+function editTask(task: HTMLElement): void {}
+
 function deleteTask(task: HTMLElement) {
 	task.remove();
+	updateTasksCounter();
 }
 
 function moveUp(task: HTMLElement): void {
