@@ -38,58 +38,61 @@ body {
 	}
 }
 
-.task {
-	position: relative;
-	@include flexTask;
-	background-color: rgb(221, 221, 221);
-	border-radius: 3px;
-	font-size: 1.6rem;
-	margin: 5px 0;
-	padding: 10px;
-	min-height: 55px;
-	.checkbox {
-		transform: scale(1.3);
-		cursor: pointer;
-		z-index: 1;
-	}
-	span {
+#tasks-container {
+	width: 100%;
+	.task {
 		position: relative;
-		width: 80%;
-		margin-left: 7px;
-		transition: all 0.25s;
-		&::after {
-			content: " ";
-			position: absolute;
-			height: 2px;
-			width: 0;
-			top: 50%;
-			left: 0;
-			transform: translateY(-50%);
-			border-radius: 2px;
-			background: black;
-			transition: inherit;
+		@include flexTask;
+		background-color: rgb(221, 221, 221);
+		border-radius: 3px;
+		font-size: 1.6rem;
+		margin: 5px 0;
+		padding: 10px;
+		min-height: 55px;
+		.checkbox {
+			transform: scale(1.3);
+			cursor: pointer;
+			z-index: 1;
 		}
-	}
-	.edit {
-		color: rgb(0, 110, 255);
-		font-size: 1.2rem;
-		margin: 0 7px;
-	}
-	.delete {
-		font-size: 1.2rem;
-		margin: 0 7px;
-		color: red;
-	}
-	.move {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		height: 85%;
-		button {
-			transition: color 0.3s;
-			font-size: 1.1rem;
-			&:hover {
-				color: blue;
+		span {
+			position: relative;
+			width: 80%;
+			margin-left: 7px;
+			transition: all 0.25s;
+			&::after {
+				content: " ";
+				position: absolute;
+				height: 2px;
+				width: 0;
+				top: 50%;
+				left: 0;
+				transform: translateY(-50%);
+				border-radius: 2px;
+				background: black;
+				transition: inherit;
+			}
+		}
+		.edit {
+			color: rgb(0, 110, 255);
+			font-size: 1.2rem;
+			margin: 0 7px;
+		}
+		.delete {
+			font-size: 1.2rem;
+			margin: 0 7px;
+			color: red;
+		}
+		.move {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 85%;
+			button {
+				transition: color 0.3s;
+				font-size: 1.1rem;
+				&:hover {
+					color: blue;
+				}
 			}
 		}
 	}

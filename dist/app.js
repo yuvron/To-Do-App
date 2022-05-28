@@ -8,21 +8,21 @@ var icons;
 const newTaskContent = document.getElementById("new-content");
 const newTaskButton = document.getElementById("new-button");
 newTaskButton.addEventListener("click", () => {
-    addTask();
+    if (newTaskContent.value.length > 0)
+        addTask(newTaskContent.value, false);
 });
 document.addEventListener("keydown", (event) => {
-    if (document.activeElement === newTaskContent && event.code === "Enter")
-        addTask();
+    if (document.activeElement === newTaskContent && event.code === "Enter" && newTaskContent.value.length > 0)
+        addTask(newTaskContent.value, false);
 });
 // Add a new task to the list of tasks
-function addTask() {
-    if (newTaskContent.value.length > 0) {
-        const tasks = document.getElementById("container").children;
-        const lastTask = [...tasks].slice(0, -1).pop();
-        lastTask.after(createTask(newTaskContent.value));
-        newTaskContent.value = "";
-        updateTasksCounter();
-    }
+function addTask(taskContent, isStoraged) {
+    const tasksContainer = document.getElementById("tasks-container");
+    tasksContainer.appendChild(createTask(taskContent));
+    newTaskContent.value = "";
+    updateTasksCounter();
+    if (!isStoraged)
+        addToStorage(taskContent);
 }
 // Create new Task
 function createTask(text) {
@@ -36,6 +36,7 @@ function createTask(text) {
     newTask.appendChild(checkbox);
     // Create text
     const taskContent = document.createElement("span");
+    taskContent.classList.add("task-content");
     text = formatText(text);
     taskContent.innerText = text;
     newTask.appendChild(taskContent);
@@ -49,7 +50,7 @@ function createTask(text) {
     const trash = document.createElement("button");
     trash.classList.add("delete");
     trash.innerHTML = icons.delete;
-    trash.addEventListener("click", () => deleteTask(newTask));
+    trash.addEventListener("click", () => deleteTask(newTask, taskContent));
     newTask.appendChild(trash);
     // Create Arrow buttons
     const arrowsCotainer = document.createElement("div");
@@ -75,9 +76,10 @@ function toggleCheckbox(checkbox) {
         checkbox.checked = false;
 }
 function editTask(task) { }
-function deleteTask(task) {
-    task.remove();
+function deleteTask(task, taskContent) {
     updateTasksCounter();
+    removeFromStorage(taskContent.innerHTML);
+    task.remove();
 }
 function moveUp(task) {
     const allTasks = [...document.querySelectorAll(".task")];
@@ -97,3 +99,37 @@ function moveDown(task) {
 function formatText(text) {
     return text.charAt(0).toUpperCase() + text.substring(1);
 }
+function addToStorage(taskContent) {
+    let i = 0;
+    while (localStorage.getItem(i.toString()) !== null) {
+        i++;
+    }
+    localStorage.setItem(i.toString(), taskContent.toLowerCase());
+}
+function removeFromStorage(taskContent) {
+    for (let key in localStorage) {
+        if (!isNaN(+key) && localStorage[key] === taskContent.toLowerCase()) {
+            localStorage.removeItem(key);
+            key = (+key + 1).toString();
+            while (localStorage.getItem(key) !== null) {
+                localStorage.setItem((+key - 1).toString(), localStorage.getItem(key));
+                localStorage.removeItem(key);
+                key = (+key + 1).toString();
+            }
+            break;
+        }
+    }
+}
+function swapInStorage(keyA, keyB) {
+    const tmp = localStorage.getItem(keyA);
+    localStorage.setItem(keyA, localStorage.getItem(keyB));
+    localStorage.setItem(keyB, tmp);
+}
+window.addEventListener("load", () => {
+    const keys = [];
+    for (const key in localStorage) {
+        if (!isNaN(+key))
+            keys.push(+key);
+    }
+    keys.sort((a, b) => a - b).forEach((key) => addTask(localStorage[key], true));
+});
