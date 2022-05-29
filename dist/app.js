@@ -7,22 +7,35 @@ var icons;
 })(icons || (icons = {}));
 const newTaskContent = document.getElementById("new-content");
 const newTaskButton = document.getElementById("new-button");
+let tasksCounter = 0;
 newTaskButton.addEventListener("click", () => {
     if (newTaskContent.value.length > 0)
         addTask(newTaskContent.value, false);
 });
 document.addEventListener("keydown", (event) => {
-    if (document.activeElement === newTaskContent && event.code === "Enter" && newTaskContent.value.length > 0)
+    if (document.activeElement === newTaskContent && event.code === "Enter" && newTaskContent.value.length > 0) {
         addTask(newTaskContent.value, false);
+    }
 });
 // Add a new task to the list of tasks
 function addTask(taskContent, isStoraged) {
+    if (!isStoraged && isTask(taskContent)) {
+        alert(`You already have a task saying: ${taskContent.toLowerCase()}`);
+        return;
+    }
     const tasksContainer = document.getElementById("tasks-container");
     tasksContainer.appendChild(createTask(taskContent));
     newTaskContent.value = "";
-    updateTasksCounter();
+    updateTasksCounter(1);
     if (!isStoraged)
         addToStorage(taskContent);
+}
+function isTask(taskContent) {
+    for (const key in localStorage) {
+        if (!isNaN(+key) && localStorage.getItem(key) === taskContent.toLowerCase())
+            return true;
+    }
+    return false;
 }
 // Create new Task
 function createTask(text) {
@@ -63,13 +76,18 @@ function createTask(text) {
     // down.classList.add("");
     up.innerHTML = icons.up;
     down.innerHTML = icons.down;
-    up.addEventListener("click", () => moveUp(newTask));
-    down.addEventListener("click", () => moveDown(newTask));
+    up.addEventListener("click", () => moveTask(newTask, "up"));
+    down.addEventListener("click", () => moveTask(newTask, "down"));
     newTask.appendChild(arrowsCotainer);
     return newTask;
 }
-function updateTasksCounter() {
+function updateTasksCounter(increment) {
     const counter = document.getElementById("counter");
+    tasksCounter += increment;
+    if (tasksCounter === 0)
+        counter.innerHTML = "You don't have any open tasks";
+    else
+        counter.innerHTML = `You have ${tasksCounter} open tasks`;
 }
 function toggleCheckbox(checkbox) {
     if (!checkbox.parentElement.classList.toggle("completed"))
@@ -77,27 +95,20 @@ function toggleCheckbox(checkbox) {
 }
 function editTask(task) { }
 function deleteTask(task, taskContent) {
-    updateTasksCounter();
+    updateTasksCounter(-1);
     removeFromStorage(taskContent.innerHTML);
     task.remove();
 }
-function moveUp(task) {
-    const allTasks = [...document.querySelectorAll(".task")];
-    const indexOfTask = allTasks.indexOf(task);
-    if (indexOfTask > 0) {
-        task.parentElement.insertBefore(task, allTasks[indexOfTask - 1]);
-    }
-}
-function moveDown(task) {
-    const allTasks = [...document.querySelectorAll(".task")];
-    allTasks.push(document.getElementsByClassName("new")[0]);
-    const indexOfTask = allTasks.indexOf(task);
-    if (indexOfTask < allTasks.length - 2) {
-        task.parentElement.insertBefore(task, allTasks[indexOfTask + 2]);
-    }
-}
 function formatText(text) {
     return text.charAt(0).toUpperCase() + text.substring(1);
+}
+function moveTask(task, direction) {
+    const allTasks = [...document.querySelectorAll(".task")];
+    const indexOfTask = allTasks.indexOf(task);
+    if (direction === "up" && indexOfTask > 0)
+        allTasks[indexOfTask - 1].insertAdjacentElement("beforebegin", task);
+    else if (direction === "down" && indexOfTask < allTasks.length - 1)
+        allTasks[indexOfTask + 1].insertAdjacentElement("afterend", task);
 }
 function addToStorage(taskContent) {
     let i = 0;
@@ -124,6 +135,7 @@ function swapInStorage(keyA, keyB) {
     const tmp = localStorage.getItem(keyA);
     localStorage.setItem(keyA, localStorage.getItem(keyB));
     localStorage.setItem(keyB, tmp);
+    console.log(localStorage);
 }
 window.addEventListener("load", () => {
     const keys = [];
