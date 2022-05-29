@@ -11,16 +11,7 @@ const newTaskButton = document.getElementById("new-button");
 let tasksCounter = 0;
 let editedTask = undefined;
 let editedContent = undefined;
-newTaskButton.addEventListener("click", () => {
-    if (newTaskContent.value.length > 0)
-        addTask(newTaskContent.value, false);
-});
-document.addEventListener("keydown", (event) => {
-    if (document.activeElement === newTaskContent && event.code === "Enter" && newTaskContent.value.length > 0) {
-        addTask(newTaskContent.value, false);
-    }
-});
-// Add a new task to the list of tasks
+// Adds a new task to the tasks panel
 function addTask(taskContent, isStoraged) {
     if (!isStoraged && isTask(taskContent)) {
         alert(`You already have a task saying: ${taskContent.toLowerCase()}`);
@@ -33,6 +24,7 @@ function addTask(taskContent, isStoraged) {
     if (!isStoraged)
         addToStorage(taskContent);
 }
+// Returns wheter a task already exists
 function isTask(taskContent) {
     for (const key in localStorage) {
         if (!isNaN(+key) && localStorage.getItem(key) === taskContent.toLowerCase())
@@ -40,7 +32,7 @@ function isTask(taskContent) {
     }
     return false;
 }
-// Create new Task
+// Create a new task with all its attributes and returns it
 function createTask(text) {
     const newTask = document.createElement("div");
     newTask.classList.add("task");
@@ -84,6 +76,7 @@ function createTask(text) {
     newTask.appendChild(arrowsCotainer);
     return newTask;
 }
+// Updates the tasks counter according to a given increment
 function updateTasksCounter(increment) {
     const counter = document.getElementById("counter");
     tasksCounter += increment;
@@ -92,16 +85,22 @@ function updateTasksCounter(increment) {
     else
         counter.innerHTML = `You have ${tasksCounter} open tasks`;
 }
+// Toggles the checkbox of a given task's input element
 function toggleCheckbox(checkbox) {
-    if (!checkbox.parentElement.classList.toggle("completed"))
+    if (!checkbox.parentElement.classList.toggle("checked"))
         checkbox.checked = false;
 }
+// Opens the editor for a given task or finishes editing an edited task
 function editTask(task) {
     if (editedTask) {
         const newTaskContent = editedTask.children[1];
         let finalTask = formatTask(newTaskContent.value);
         if (finalTask === "")
             finalTask = editedContent.innerHTML;
+        else if (isTask(finalTask)) {
+            alert(`You already have a task saying: ${finalTask.toLowerCase()}`);
+            finalTask = editedContent.innerHTML;
+        }
         editedTask.replaceChild(editedContent, editedTask.children[1]);
         editedTask.children[1].innerHTML = finalTask;
         editedTask.children[2].innerHTML = icons.edit;
@@ -122,23 +121,30 @@ function editTask(task) {
     input.select();
     task.children[2].innerHTML = icons.doneEditing;
 }
+// Deletes a task from the tasks panel
 function deleteTask(task, taskContent) {
     updateTasksCounter(-1);
     removeFromStorage(taskContent.innerHTML);
     task.remove();
 }
+// Gets an input and returns a formatted version of it
 function formatTask(text) {
     return text.charAt(0).toUpperCase() + text.substring(1);
 }
+// Moves a task around the tasks panel according to a given direction
 function moveTask(task, direction) {
     const allTasks = [...document.querySelectorAll(".task")];
     const indexOfTask = allTasks.indexOf(task);
-    if (direction === "up" && indexOfTask > 0)
+    if (direction === "up" && indexOfTask > 0) {
         allTasks[indexOfTask - 1].insertAdjacentElement("beforebegin", task);
-    else if (direction === "down" && indexOfTask < allTasks.length - 1)
+        swapInStorage(indexOfTask.toString(), (indexOfTask - 1).toString());
+    }
+    else if (direction === "down" && indexOfTask < allTasks.length - 1) {
         allTasks[indexOfTask + 1].insertAdjacentElement("afterend", task);
-    swapInStorage(indexOfTask.toString(), (direction === "up" ? +indexOfTask - 1 : +indexOfTask + 1).toString());
+        swapInStorage(indexOfTask.toString(), (indexOfTask + 1).toString());
+    }
 }
+// Adds a new task to the local storage
 function addToStorage(taskContent) {
     let i = 0;
     while (localStorage.getItem(i.toString()) !== null) {
@@ -146,6 +152,7 @@ function addToStorage(taskContent) {
     }
     localStorage.setItem(i.toString(), taskContent.toLowerCase());
 }
+// Removes a task from the local storage
 function removeFromStorage(taskContent) {
     for (let key in localStorage) {
         if (!isNaN(+key) && localStorage[key] === taskContent.toLowerCase()) {
@@ -160,14 +167,28 @@ function removeFromStorage(taskContent) {
         }
     }
 }
+// Swaps the places of two tasks in the local storage
 function swapInStorage(keyA, keyB) {
     const tmp = localStorage.getItem(keyA);
     localStorage.setItem(keyA, localStorage.getItem(keyB).toLowerCase());
     localStorage.setItem(keyB, tmp.toLowerCase());
 }
+// Updates a task's content in the local storage
 function updateStorage(taskIndex, newValue) {
     localStorage.setItem(taskIndex, newValue.toLowerCase());
 }
+// Add a new task when the add button is pressed
+newTaskButton.addEventListener("click", () => {
+    if (newTaskContent.value.length > 0)
+        addTask(newTaskContent.value, false);
+});
+// Add a new task when the enter key is pressed
+document.addEventListener("keydown", (event) => {
+    if (document.activeElement === newTaskContent && event.code === "Enter" && newTaskContent.value.length > 0) {
+        addTask(newTaskContent.value, false);
+    }
+});
+// Adds all the tasks in the local storage when the window loads
 window.addEventListener("load", () => {
     const keys = [];
     for (const key in localStorage) {

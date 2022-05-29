@@ -34,11 +34,11 @@ body {
 }
 #container h1 {
   font-size: 3rem;
-  line-height: 1.6;
+  line-height: 1;
 }
 #container p {
   font-size: 1.3rem;
-  line-height: 1.4;
+  line-height: 2;
 }
 
 #tasks-container {
@@ -52,7 +52,7 @@ body {
   background-color: rgb(221, 221, 221);
   border-radius: 3px;
   font-size: 1.6rem;
-  margin: 5px 0;
+  margin: 7px 0;
   padding: 10px;
   min-height: 55px;
 }
@@ -65,26 +65,13 @@ body {
   position: relative;
   width: 80%;
   margin-left: 7px;
-  transition: all 0.25s;
-}
-#tasks-container .task span::after {
-  content: " ";
-  position: absolute;
-  height: 2px;
-  width: 0;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  border-radius: 2px;
-  background: black;
-  transition: inherit;
+  text-decoration: none;
 }
 #tasks-container .task #edit-box {
   width: 80%;
   height: 100%;
   margin-left: 5px;
   font-size: 1.6rem;
-  z-index: 2;
   padding: 1px;
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid rgb(81, 203, 238);
@@ -94,41 +81,50 @@ body {
 #tasks-container .task #edit-box:focus {
   outline: none;
 }
-#tasks-container .task .edit {
-  color: rgb(0, 110, 255);
-  font-size: 1.2rem;
-  margin: 0 7px;
-}
+#tasks-container .task .edit,
 #tasks-container .task .delete {
   font-size: 1.2rem;
   margin: 0 7px;
+  transition: all 0.2s;
+}
+#tasks-container .task .edit:hover,
+#tasks-container .task .delete:hover {
+  transform: scale(1.2);
+}
+#tasks-container .task .edit {
+  color: rgb(0, 110, 255);
+}
+#tasks-container .task .delete {
   color: red;
+  z-index: 1;
 }
 #tasks-container .task .move {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 85%;
+  z-index: 1;
 }
 #tasks-container .task .move button {
   transition: color 0.3s;
   font-size: 1.1rem;
+  transition: all 0.15s;
 }
 #tasks-container .task .move button:hover {
-  color: blue;
+  transform: scale(1.4);
 }
 
-.completed::after {
+.checked::after {
   content: "";
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.3);
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
 }
-.completed span::after {
-  width: 100%;
+.checked span {
+  text-decoration: line-through;
 }
 
 .new {
@@ -140,7 +136,8 @@ body {
   padding: 0 5px;
 }
 .new .text {
-  font-size: 1.3rem;
+  font-family: corbel;
+  font-size: 1.2rem;
   background-color: rgba(255, 255, 255, 0);
   border: 0;
   border-bottom: 1px solid darkgray;
@@ -160,5 +157,8 @@ body {
   transition: font-size 0.1s;
 }
 .new #new-button:hover {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+}
+.new #new-button:active {
+  transform: scale(0.95);
 }

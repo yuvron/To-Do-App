@@ -1,4 +1,17 @@
-$primary-color: rgb(201, 212, 163);
+$background-color: rgb(201, 212, 163);
+
+@mixin flexCenter($direction) {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: $direction;
+}
+
+@mixin flexTask {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
 
 * {
 	margin: 0;

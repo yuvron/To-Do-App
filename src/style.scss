@@ -1,20 +1,7 @@
 @import "config";
 
-@mixin flexCenter($direction) {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: $direction;
-}
-
-@mixin flexTask {
-	display: flex;
-	align-items: center;
-	width: 100%;
-}
-
 body {
-	background-color: $primary-color;
+	background-color: $background-color;
 	@include flexCenter(row);
 	min-height: 100vh;
 	font-family: corbel;
@@ -30,11 +17,11 @@ body {
 	@include flexCenter(column);
 	h1 {
 		font-size: 3rem;
-		line-height: 1.6;
+		line-height: 1;
 	}
 	p {
 		font-size: 1.3rem;
-		line-height: 1.4;
+		line-height: 2;
 	}
 }
 
@@ -46,7 +33,7 @@ body {
 		background-color: rgb(221, 221, 221);
 		border-radius: 3px;
 		font-size: 1.6rem;
-		margin: 5px 0;
+		margin: 7px 0;
 		padding: 10px;
 		min-height: 55px;
 		.checkbox {
@@ -58,26 +45,13 @@ body {
 			position: relative;
 			width: 80%;
 			margin-left: 7px;
-			transition: all 0.25s;
-			&::after {
-				content: " ";
-				position: absolute;
-				height: 2px;
-				width: 0;
-				top: 50%;
-				left: 0;
-				transform: translateY(-50%);
-				border-radius: 2px;
-				background: black;
-				transition: inherit;
-			}
+			text-decoration: none;
 		}
 		#edit-box {
 			width: 80%;
 			height: 100%;
 			margin-left: 5px;
 			font-size: 1.6rem;
-			z-index: 2;
 			padding: 1px;
 			background-color: rgba(0, 0, 0, 0.1);
 			border: 1px solid rgba(81, 203, 238, 1);
@@ -87,44 +61,52 @@ body {
 				outline: none;
 			}
 		}
-		.edit {
-			color: rgb(0, 110, 255);
-			font-size: 1.2rem;
-			margin: 0 7px;
-		}
+		.edit,
 		.delete {
 			font-size: 1.2rem;
 			margin: 0 7px;
+			transition: all 0.2s;
+			&:hover {
+				transform: scale(1.2);
+			}
+		}
+		.edit {
+			color: rgb(0, 110, 255);
+		}
+		.delete {
 			color: red;
+			z-index: 1;
 		}
 		.move {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
 			height: 85%;
+			z-index: 1;
 			button {
 				transition: color 0.3s;
 				font-size: 1.1rem;
+				transition: all 0.15s;
 				&:hover {
-					color: blue;
+					transform: scale(1.4);
 				}
 			}
 		}
 	}
 }
 
-.completed {
+.checked {
 	&::after {
 		content: "";
 		position: absolute;
-		background-color: rgba(0, 0, 0, 0.4);
+		background-color: rgba(0, 0, 0, 0.3);
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 	}
-	span::after {
-		width: 100%;
+	span {
+		text-decoration: line-through;
 	}
 }
 
@@ -134,7 +116,8 @@ body {
 	margin-bottom: 15px;
 	padding: 0 5px;
 	.text {
-		font-size: 1.3rem;
+		font-family: corbel;
+		font-size: 1.2rem;
 		background-color: rgba(255, 255, 255, 0);
 		border: 0;
 		border-bottom: 1px solid darkgray;
@@ -153,7 +136,10 @@ body {
 		font-size: 1rem;
 		transition: font-size 0.1s;
 		&:hover {
-			font-size: 1.2rem;
+			font-size: 1.3rem;
+		}
+		&:active {
+			transform: scale(0.95);
 		}
 	}
 }
