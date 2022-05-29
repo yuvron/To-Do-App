@@ -113,6 +113,7 @@ function moveTask(task: HTMLElement, direction: "up" | "down"): void {
 	const indexOfTask = allTasks.indexOf(task);
 	if (direction === "up" && indexOfTask > 0) allTasks[indexOfTask - 1].insertAdjacentElement("beforebegin", task);
 	else if (direction === "down" && indexOfTask < allTasks.length - 1) allTasks[indexOfTask + 1].insertAdjacentElement("afterend", task);
+	swapInStorage(indexOfTask.toString(), (direction === "up" ? +indexOfTask - 1 : +indexOfTask + 1).toString());
 }
 
 function addToStorage(taskContent: string): void {
@@ -142,7 +143,6 @@ function swapInStorage(keyA: string, keyB: string): void {
 	const tmp = localStorage.getItem(keyA);
 	localStorage.setItem(keyA, localStorage.getItem(keyB));
 	localStorage.setItem(keyB, tmp);
-	console.log(localStorage);
 }
 
 window.addEventListener("load", () => {
