@@ -72,6 +72,21 @@ body {
 				transition: inherit;
 			}
 		}
+		#edit-box {
+			width: 80%;
+			height: 100%;
+			margin-left: 5px;
+			font-size: 1.6rem;
+			z-index: 2;
+			padding: 1px;
+			background-color: rgba(0, 0, 0, 0.1);
+			border: 1px solid rgba(81, 203, 238, 1);
+			box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+			font-family: corbel;
+			&:focus {
+				outline: none;
+			}
+		}
 		.edit {
 			color: rgb(0, 110, 255);
 			font-size: 1.2rem;

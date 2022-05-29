@@ -1,6 +1,7 @@
 var icons;
 (function (icons) {
     icons["edit"] = "<i class='fa-solid fa-pen'></i>";
+    icons["doneEditing"] = "<i class='fa-solid fa-circle-check'></i>";
     icons["delete"] = "<i class='fa-solid fa-trash'></i>";
     icons["up"] = "<i class='fa-solid fa-angle-up'>";
     icons["down"] = "<i class='fa-solid fa-angle-down'>";
@@ -8,6 +9,8 @@ var icons;
 const newTaskContent = document.getElementById("new-content");
 const newTaskButton = document.getElementById("new-button");
 let tasksCounter = 0;
+let editedTask = undefined;
+let editedContent = undefined;
 newTaskButton.addEventListener("click", () => {
     if (newTaskContent.value.length > 0)
         addTask(newTaskContent.value, false);
@@ -50,7 +53,7 @@ function createTask(text) {
     // Create text
     const taskContent = document.createElement("span");
     taskContent.classList.add("task-content");
-    text = formatText(text);
+    text = formatTask(text);
     taskContent.innerText = text;
     newTask.appendChild(taskContent);
     // Create edit button
@@ -93,13 +96,38 @@ function toggleCheckbox(checkbox) {
     if (!checkbox.parentElement.classList.toggle("completed"))
         checkbox.checked = false;
 }
-function editTask(task) { }
+function editTask(task) {
+    if (editedTask) {
+        const newTaskContent = editedTask.children[1];
+        let finalTask = formatTask(newTaskContent.value);
+        if (finalTask === "")
+            finalTask = editedContent.innerHTML;
+        editedTask.replaceChild(editedContent, editedTask.children[1]);
+        editedTask.children[1].innerHTML = finalTask;
+        editedTask.children[2].innerHTML = icons.edit;
+        updateStorage([...document.querySelectorAll(".task")].indexOf(editedTask).toString(), finalTask);
+        const editAnotherTask = editedTask === task;
+        editedTask = undefined;
+        editedContent = undefined;
+        if (editAnotherTask)
+            return;
+    }
+    const input = document.createElement("input");
+    input.id = "edit-box";
+    input.value = task.children[1].innerHTML;
+    editedTask = task;
+    editedContent = task.children[1];
+    task.replaceChild(input, task.children[1]);
+    input.focus();
+    input.select();
+    task.children[2].innerHTML = icons.doneEditing;
+}
 function deleteTask(task, taskContent) {
     updateTasksCounter(-1);
     removeFromStorage(taskContent.innerHTML);
     task.remove();
 }
-function formatText(text) {
+function formatTask(text) {
     return text.charAt(0).toUpperCase() + text.substring(1);
 }
 function moveTask(task, direction) {
@@ -134,8 +162,11 @@ function removeFromStorage(taskContent) {
 }
 function swapInStorage(keyA, keyB) {
     const tmp = localStorage.getItem(keyA);
-    localStorage.setItem(keyA, localStorage.getItem(keyB));
-    localStorage.setItem(keyB, tmp);
+    localStorage.setItem(keyA, localStorage.getItem(keyB).toLowerCase());
+    localStorage.setItem(keyB, tmp.toLowerCase());
+}
+function updateStorage(taskIndex, newValue) {
+    localStorage.setItem(taskIndex, newValue.toLowerCase());
 }
 window.addEventListener("load", () => {
     const keys = [];

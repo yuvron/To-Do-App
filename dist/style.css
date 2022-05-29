@@ -79,6 +79,21 @@ body {
   background: black;
   transition: inherit;
 }
+#tasks-container .task #edit-box {
+  width: 80%;
+  height: 100%;
+  margin-left: 5px;
+  font-size: 1.6rem;
+  z-index: 2;
+  padding: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgb(81, 203, 238);
+  box-shadow: 0 0 5px rgb(81, 203, 238);
+  font-family: corbel;
+}
+#tasks-container .task #edit-box:focus {
+  outline: none;
+}
 #tasks-container .task .edit {
   color: rgb(0, 110, 255);
   font-size: 1.2rem;

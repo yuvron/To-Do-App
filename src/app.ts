@@ -1,5 +1,6 @@
 enum icons {
 	edit = "<i class='fa-solid fa-pen'></i>",
+	doneEditing = "<i class='fa-solid fa-circle-check'></i>",
 	delete = "<i class='fa-solid fa-trash'></i>",
 	up = "<i class='fa-solid fa-angle-up'>",
 	down = "<i class='fa-solid fa-angle-down'>",
@@ -9,6 +10,8 @@ const newTaskContent = document.getElementById("new-content") as HTMLInputElemen
 const newTaskButton = document.getElementById("new-button");
 
 let tasksCounter = 0;
+let editedTask: Element = undefined;
+let editedContent: Element = undefined;
 
 newTaskButton.addEventListener("click", () => {
 	if (newTaskContent.value.length > 0) addTask(newTaskContent.value, false);
@@ -53,7 +56,7 @@ function createTask(text: string): HTMLElement {
 	// Create text
 	const taskContent = document.createElement("span");
 	taskContent.classList.add("task-content");
-	text = formatText(text);
+	text = formatTask(text);
 	taskContent.innerText = text;
 	newTask.appendChild(taskContent);
 	// Create edit button
@@ -96,7 +99,30 @@ function toggleCheckbox(checkbox: HTMLInputElement): void {
 	if (!checkbox.parentElement.classList.toggle("completed")) checkbox.checked = false;
 }
 
-function editTask(task: HTMLElement): void {}
+function editTask(task: HTMLElement): void {
+	if (editedTask) {
+		const newTaskContent = editedTask.children[1] as HTMLInputElement;
+		let finalTask = formatTask(newTaskContent.value);
+		if (finalTask === "") finalTask = editedContent.innerHTML;
+		editedTask.replaceChild(editedContent, editedTask.children[1]);
+		editedTask.children[1].innerHTML = finalTask;
+		editedTask.children[2].innerHTML = icons.edit;
+		updateStorage([...document.querySelectorAll(".task")].indexOf(editedTask).toString(), finalTask);
+		const editAnotherTask = editedTask === task;
+		editedTask = undefined;
+		editedContent = undefined;
+		if (editAnotherTask) return;
+	}
+	const input = document.createElement("input");
+	input.id = "edit-box";
+	input.value = task.children[1].innerHTML;
+	editedTask = task;
+	editedContent = task.children[1];
+	task.replaceChild(input, task.children[1]);
+	input.focus();
+	input.select();
+	task.children[2].innerHTML = icons.doneEditing;
+}
 
 function deleteTask(task: HTMLElement, taskContent: HTMLElement) {
 	updateTasksCounter(-1);
@@ -104,7 +130,7 @@ function deleteTask(task: HTMLElement, taskContent: HTMLElement) {
 	task.remove();
 }
 
-function formatText(text: string): string {
+function formatTask(text: string): string {
 	return text.charAt(0).toUpperCase() + text.substring(1);
 }
 
@@ -141,8 +167,12 @@ function removeFromStorage(taskContent: string): void {
 
 function swapInStorage(keyA: string, keyB: string): void {
 	const tmp = localStorage.getItem(keyA);
-	localStorage.setItem(keyA, localStorage.getItem(keyB));
-	localStorage.setItem(keyB, tmp);
+	localStorage.setItem(keyA, localStorage.getItem(keyB).toLowerCase());
+	localStorage.setItem(keyB, tmp.toLowerCase());
+}
+
+function updateStorage(taskIndex: string, newValue: string): void {
+	localStorage.setItem(taskIndex, newValue.toLowerCase());
 }
 
 window.addEventListener("load", () => {
